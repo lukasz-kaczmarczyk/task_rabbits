@@ -1,4 +1,5 @@
 #include "rabbits.h"
+#include <string.h>
 
 
 
@@ -6,12 +7,17 @@ static data_input *data;
 
 static int read_sets_number(char *file_name);
 static bool create_list(data_input *head, int list_length);
+static void get_values(char *s, int quantity, int *res);
+static void read_data_set(FILE *fp, data_input *head);
+static char * strsep(char **sp, char *sep);
+
+static int sets_number;
 
 bool read_data(data_input *data_list, char *file_name)
 {	
 	data_input *list_it;
 	bool result = NOK;
-	int i = 0, sets_number = 0;
+	int i = 0;
 	FILE *fp;
 	char tmp[10];
 	fp = fopen(file_name , "r");
@@ -39,7 +45,10 @@ bool read_data(data_input *data_list, char *file_name)
 	}	
 		
 	for (i = 0; i < sets_number; i++) {
-	    //compute_rabbits(list_it);
+		read_data_set(fp,data_list);
+		printf("%d\n", data_list->rabbits_first);
+		printf("%d\n", data_list->rabbits_second);
+		printf("%d\n", data_list->rabbits_quantity);
 	}
        
 
@@ -66,6 +75,8 @@ void free_data(data_input **data_list)
 int compute_rabbits(data_input in)
 {
 	int result, tmp1, tmp2, i = 3;
+	data_input tmp = in;
+	
 	switch (in.day) {
 		case 1:
 			result = in.rabbits_first;
@@ -99,7 +110,7 @@ static int read_sets_number(char *file_name)
         	result = 0;
     	}
     
-       if (NULL == fgets(tmp, 6, fp)){
+       if (NULL == fgets(tmp, 6, fp)) {
        		result = 0;
        } 
 
@@ -107,6 +118,45 @@ static int read_sets_number(char *file_name)
    result = atoi(tmp);
    return result;
 	
+}
+
+static void read_data_set(FILE *fp, data_input *data)
+{
+    	char *buffer = (char *)malloc(sizeof(char) * 100);
+    	int val[3];
+    	char *chunk = (char *)malloc(sizeof(char) * 100);
+    	int i = 0;
+    	
+    	if (NULL == buffer) {
+        	printf("Error allocating memory for line buffer.");
+        	exit(1);
+    	}
+    	
+    	fgets(buffer, 100, fp);
+    	//get_values(buffer,3, val);
+    	
+    	while ((chunk = strsep(&buffer, " ") ) && (i < 3)) {
+    		val[i] = atoi(chunk);
+    		i++;
+	}
+
+    	data->rabbits_first = val[0];
+    	data->rabbits_second = val[1];
+    	data->rabbits_quantity = val[2];
+}
+
+static void get_values(char *s, int quantity, int *res)
+{
+	char tmp[10];
+	int i,j = 0;
+	for (i = 0; i < 1; i++) {
+		while (" " != *s) {
+			tmp[i] = *s;
+			++s;
+		}
+		res[i] = atoi(tmp);
+		++s;
+	}
 }
 
 bool create_list(data_input *head, int list_length)
@@ -143,3 +193,14 @@ bool create_list(data_input *head, int list_length)
 	}
 	return OK;
 }
+
+static char * strsep(char **sp, char *sep)
+    {
+        char *p, *s;
+        if (sp == NULL || *sp == NULL || **sp == '\0') return(NULL);
+        s = *sp;
+        p = s + strcspn(s, sep);
+        if (*p != '\0') *p++ = '\0';
+        *sp = p;
+        return(s);
+    }

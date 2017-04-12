@@ -41,12 +41,11 @@ int main(int argc, char *argv[]) {
 	
 	data_input *data_list, *tmp;
 	data_list = malloc(sizeof(data_input));
-	read_data(data_list, "data.txt");
+	execute(data_list, "data.txt");
+	
+	printf("%d\n", data_list->rabbits_quantity);
 	
 	free_data(data_list);
 
 	return 0;
 }
-
-
-

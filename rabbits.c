@@ -8,22 +8,23 @@ static data_input *data;
 
 static int read_sets_number(char *file_name);
 static bool create_list(data_input *head, int list_length);
-static void get_values(char *s, int quantity, int *res);
 static void read_data_set(FILE *fp, data_input *head);
 static data_input *create_node();
 static void display_list(data_input *list);
 //static char * strsep(char **sp, char *sep);
+static int compute_rabbits(data_input in);
+static void save_quantity(FILE *fp, int in);
 
 static int sets_number;
 
-bool read_data(data_input *data_list, char *file_name)
+bool execute(data_input *data_list, char *file_name)
 {	
 	data_input *list_it;
 	bool result = OK;
 	int i = 0;
 	FILE *fp;
 	char tmp[10];
-	fp = fopen(file_name , "r");
+	fp = fopen(file_name , "r+");
 	
 	list_it = data_list;
 	
@@ -46,11 +47,12 @@ bool read_data(data_input *data_list, char *file_name)
 		    result = NOK;
 	}	
 	
-	display_list(data_list);
+	//display_list(data_list);
 	
 	while (NULL != list_it) {
 		read_data_set(fp,list_it);
 		list_it->rabbits_quantity = compute_rabbits(*list_it);
+		save_quantity(fp, list_it->rabbits_quantity);
 		printf("result: %d\n", list_it->rabbits_quantity);
 		list_it = list_it->next;
 	}
@@ -72,7 +74,7 @@ void free_data(data_input *data_list)
 
 }
 
-int compute_rabbits(data_input in)
+static int compute_rabbits(data_input in)
 {
 	int result, tmp1, tmp2, i = 3;
 	data_input tmp = in;
@@ -147,19 +149,6 @@ static void read_data_set(FILE *fp, data_input *data)
     	free(chunk);
 }
 
-static void get_values(char *s, int quantity, int *res)
-{
-	char tmp[10];
-	int i,j = 0;
-	for (i = 0; i < 1; i++) {
-		while (' ' != *s) {
-			tmp[i] = *s;
-			++s;
-		}
-		res[i] = atoi(tmp);
-		++s;
-	}
-}
 
 bool create_list(data_input *head, int list_length)
 {
@@ -188,6 +177,11 @@ static void display_list(data_input *list)
         list = list->next;
     }
 }
+
+static void save_quantity(FILE *fp, int in)
+{
+    fprintf(fp, "number of rabbits %d\n", in);
+}
 /*
 static char * strsep(char **sp, char *sep)
     {
@@ -200,4 +194,3 @@ static char * strsep(char **sp, char *sep)
         return(s);
     }
 */
-

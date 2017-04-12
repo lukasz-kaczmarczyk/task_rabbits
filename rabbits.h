@@ -18,7 +18,6 @@ typedef struct data_in
 	
 }data_input;
 
-int compute_rabbits(data_input in);
 bool read_data(data_input *data_list, char *file_name);
 void free_data(data_input *data_list);
 

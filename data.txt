@@ -1,4 +1,4 @@
-3
+2
 5 1 1
-4 4 3
-4 2 2
+number of rabbits 5
+number of rabbits 1

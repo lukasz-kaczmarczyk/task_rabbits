@@ -1,5 +1,6 @@
 #include "rabbits.h"
 #include <string.h>
+#include <assert.h>
 
 
 
@@ -9,6 +10,8 @@ static int read_sets_number(char *file_name);
 static bool create_list(data_input *head, int list_length);
 static void get_values(char *s, int quantity, int *res);
 static void read_data_set(FILE *fp, data_input *head);
+static data_input *create_node();
+static void display_list(data_input *list);
 //static char * strsep(char **sp, char *sep);
 
 static int sets_number;
@@ -34,24 +37,24 @@ bool read_data(data_input *data_list, char *file_name)
      		result = NOK;
         } else {
        		sets_number = atoi(tmp);
-       		//printf("sets_number: %d\n", sets_number);
     			
         }
 	
        		
-       		
         if (NOK == create_list(data_list, sets_number)) { //create list in memory{
-		perror("list of data creating error!!!");
-		result = NOK;
+		    perror("list of data creating error!!!");
+		    result = NOK;
 	}	
-		
-	while (NULL != list_it) { //----------only one time!!!
+	
+	display_list(data_list);
+	
+	while (NULL != list_it) {
 		read_data_set(fp,list_it);
 		list_it->rabbits_quantity = compute_rabbits(*list_it);
+		printf("result: %d\n", list_it->rabbits_quantity);
 		list_it = list_it->next;
 	}
        
-
    fclose(fp);
    result = atoi(tmp);
    return result;
@@ -65,7 +68,6 @@ void free_data(data_input *data_list)
        tmp = data_list;
        data_list = data_list->next;
        free(tmp);
-       printf("free\n");
     }
 
 }
@@ -93,7 +95,6 @@ int compute_rabbits(data_input in)
 				
 			}	
 	}
-	printf("result: %d\n", result);
 	return result;
 }
 
@@ -114,7 +115,6 @@ static int read_sets_number(char *file_name)
 
    fclose(fp);
    result = atoi(tmp);
-   printf("nr of sets: %d\n", result);
    return result;
 	
 }
@@ -132,8 +132,7 @@ static void read_data_set(FILE *fp, data_input *data)
     	}
     	
     	fgets(buffer, 100, fp);
-    	printf("data: %s\n", buffer);
-    	get_values(buffer,3, val);
+    	printf("\n----data-----: %s", buffer);
     	
     	while ((chunk = strsep(&buffer, " ") ) && (i < 3)) {
     		val[i] = atoi(chunk);
@@ -143,6 +142,9 @@ static void read_data_set(FILE *fp, data_input *data)
     	data->day = val[0];
     	data->rabbits_first = val[1];
     	data->rabbits_second = val[2];
+    	
+    	free(buffer);
+    	free(chunk);
 }
 
 static void get_values(char *s, int quantity, int *res)
@@ -161,37 +163,30 @@ static void get_values(char *s, int quantity, int *res)
 
 bool create_list(data_input *head, int list_length)
 {
-	data_input *tmp_data = head;
+	data_input *tmp = head;
 	int i;
-		
-	//create head:
-	tmp_data = malloc(sizeof(data_input));
-	if (NULL == tmp_data) {
-        	perror("\n Node creation failed \n");
-        	return NOK;
-    	} else {
-    		tmp_data->next = NULL;
-    		tmp_data->prev = NULL;
-    			
-	}
-	
-	for (i = 0;i<list_length;++i) {
-		tmp_data->next = malloc(sizeof(data_input));
-		
-		if(NULL == tmp_data->next)
-    		{
-        		printf("\n Node creation failed \n");
-        		return NOK;
-    		}
-		else
-    		{
-    			++tmp_data;
-    			tmp_data->next = NULL;
-    			
-		}
-    		
+	head = create_node();
+	for (i = 0;i<(list_length-1);i++) {
+		tmp->next = create_node();
+        tmp = tmp->next;
 	}
 	return OK;
+}
+
+static data_input *create_node() {
+    data_input *node = malloc(sizeof(*node));
+    assert(node != NULL);
+    node->next = NULL;
+
+    return node;
+}
+
+static void display_list(data_input *list)
+{
+    data_input *tmp = list;
+    while(NULL != list) {
+        list = list->next;
+    }
 }
 /*
 static char * strsep(char **sp, char *sep)

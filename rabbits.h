@@ -24,4 +24,3 @@ void free_data(data_input *data_list);
 
 #endif
 
-

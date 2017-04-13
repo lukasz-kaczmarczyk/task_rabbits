@@ -13,7 +13,7 @@ static data_input *create_node();
 static void display_list(data_input *list);
 //static char * strsep(char **sp, char *sep);
 static int compute_rabbits(data_input in);
-static void save_quantity(FILE *fp, int in);
+
 
 static int sets_number;
 
@@ -24,7 +24,7 @@ bool execute(data_input *data_list, char *file_name)
 	int i = 0;
 	FILE *fp;
 	char tmp[10];
-	fp = fopen(file_name , "r+");
+	fp = fopen(file_name , "r");
 	
 	list_it = data_list;
 	
@@ -52,7 +52,6 @@ bool execute(data_input *data_list, char *file_name)
 	while (NULL != list_it) {
 		read_data_set(fp,list_it);
 		list_it->rabbits_quantity = compute_rabbits(*list_it);
-		save_quantity(fp, list_it->rabbits_quantity);
 		printf("result: %d\n", list_it->rabbits_quantity);
 		list_it = list_it->next;
 	}
@@ -178,9 +177,17 @@ static void display_list(data_input *list)
     }
 }
 
-static void save_quantity(FILE *fp, int in)
+void save_to_file(char *file_name, data_input *in)
 {
-    fprintf(fp, "number of rabbits %d\n", in);
+    data_input *tmp = in;
+    int i = 1;
+    FILE *fp = fopen(file_name, "a");
+    while (NULL != tmp) {
+        fprintf(fp, "\nnumber of rabbits for set %d:  %d\n",i, tmp->rabbits_quantity);
+        tmp = tmp->next;
+        i++;
+    }
+    fclose(fp);
 }
 /*
 static char * strsep(char **sp, char *sep)

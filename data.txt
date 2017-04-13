@@ -1,4 +1,10 @@
 2
 5 1 1
-number of rabbits 5
-number of rabbits 1
+4 3 3
+
+------------
+
+
+number of rabbits for set 1:  5
+
+number of rabbits for set 2:  9

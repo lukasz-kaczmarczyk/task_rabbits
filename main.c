@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
 	data_list = malloc(sizeof(data_input));
 	execute(data_list, "data.txt");
 	
-	printf("%d\n", data_list->rabbits_quantity);
+	save_to_file("data.txt", data_list);
 	
 	free_data(data_list);
 

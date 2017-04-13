@@ -18,6 +18,7 @@ typedef struct data_in
 	
 }data_input;
 
+void save_to_file(char *file_name, data_input *in);
 bool read_data(data_input *data_list, char *file_name);
 void free_data(data_input *data_list);
 
